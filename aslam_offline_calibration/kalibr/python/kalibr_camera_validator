@@ -24,6 +24,8 @@ import igraph
 # make numpy print prettier
 np.set_printoptions(suppress=True)
 
+NEXT_IMAGE_NUMBER = 0
+
 class CalibrationTargetDetector(object):
     def __init__(self, camera, targetConfig):
 
@@ -190,10 +192,6 @@ class CameraChainValidator(object):
         return np_rect_image
 
     def generatePairView(self, camAnr, camBnr):
-        #prepare the window
-        windowName = "Rectified view (cam{0} and cam{1})".format(camAnr, camBnr)
-        cv2.namedWindow(windowName, cv2.WINDOW_AUTOSIZE)
-            
         #get the mono validators for each cam
         camA = self.monovalidators[camAnr]
         camB = self.monovalidators[camBnr]
@@ -293,9 +291,11 @@ class CameraChainValidator(object):
         else:
  
             cv2.putText(np_image_rect, "Detection failed...", (np_image_rect.shape[0]/2,np_image_rect.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=2, color=(0, 0, 255), thickness=3)
-            
-        cv2.imshow(windowName, np_image_rect)
-    
+
+        global NEXT_IMAGE_NUMBER
+        cv2.imwrite('/tmp/kalibr_camera_validator/{:08d}.png'.format(NEXT_IMAGE_NUMBER), np_image_rect)
+        NEXT_IMAGE_NUMBER += 1
+
     
     def prepareStereoRectificationMaps(self, camAnr, camBnr):        
         #get the camera parameters for the undistorted cameras
@@ -378,7 +378,7 @@ class MonoCameraValidator(object):
         
         self.topic = camConfig.getRosTopic()
         self.windowName = "Camera: {0}".format(self.topic)
-    
+
         #register the cam topic to the message synchronizer
         self.image_sub = message_filters.Subscriber(self.topic, Image)
         
@@ -399,7 +399,6 @@ class MonoCameraValidator(object):
         
     
     def generateMonoview(self, np_image, observation, obs_valid):
-        cv2.namedWindow(self.windowName, cv2.WINDOW_AUTOSIZE)
         np_image = cv2.cvtColor(np_image, cv2.COLOR_GRAY2BGR)
 
         if obs_valid:
@@ -453,8 +452,9 @@ class MonoCameraValidator(object):
         else:
             cv2.putText(np_image, "Detection failed...", (np_image.shape[0]/2,np_image.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0, 0, 255), thickness=2)
 
-        cv2.imshow(self.windowName, np_image)
-        cv2.waitKey(1)
+        global NEXT_IMAGE_NUMBER
+        cv2.imwrite('/tmp/kalibr_camera_validator/{:s}_{:08d}.png'.format(self.windowName.replace('/', '_'), NEXT_IMAGE_NUMBER), np_image)
+        NEXT_IMAGE_NUMBER += 1
 
 
 if __name__ == "__main__":        
