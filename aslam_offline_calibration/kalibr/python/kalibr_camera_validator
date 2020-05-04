@@ -288,9 +288,8 @@ class CameraChainValidator(object):
                  
                 cv2.putText(np_image_rect, err_txt, (x,y), cv2.FONT_HERSHEY_SIMPLEX, fontScale=fontScale, color=(0, 0, 255), thickness=2)
                 cv2.putText(np_image_rect, "{0: .4f}".format(err_val), (x+100,y), cv2.FONT_HERSHEY_SIMPLEX, fontScale=fontScale, color=(0, 0, 255), thickness=2)
-        else:
- 
-            cv2.putText(np_image_rect, "Detection failed...", (np_image_rect.shape[0]/2,np_image_rect.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=2, color=(0, 0, 255), thickness=3)
+#        else:
+#            cv2.putText(np_image_rect, "Detection failed...", (np_image_rect.shape[0]/2,np_image_rect.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=2, color=(0, 0, 255), thickness=3)
 
         global NEXT_IMAGE_NUMBER
         cv2.imwrite('/tmp/kalibr_camera_validator/{:08d}.png'.format(NEXT_IMAGE_NUMBER), np_image_rect)
@@ -449,8 +448,8 @@ class MonoCameraValidator(object):
                 radius_fix = int(radius * 2**shift)
                 cv2.circle(np_image, (px_fix, py_fix), radius=radius_fix, color=(255,255,0), thickness=thickness, shift=shift, lineType=cv2.LINE_AA)
 
-        else:
-            cv2.putText(np_image, "Detection failed...", (np_image.shape[0]/2,np_image.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0, 0, 255), thickness=2)
+#        else:
+#            cv2.putText(np_image, "Detection failed...", (np_image.shape[0]/2,np_image.shape[1]/5), cv2.FONT_HERSHEY_SIMPLEX, fontScale=1.5, color=(0, 0, 255), thickness=2)
 
         global NEXT_IMAGE_NUMBER
         cv2.imwrite('/tmp/kalibr_camera_validator/{:s}_{:08d}.png'.format(self.windowName.replace('/', '_'), NEXT_IMAGE_NUMBER), np_image)
